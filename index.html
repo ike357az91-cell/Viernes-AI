@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#090a12">
+<title>VIERNES AI</title>
+<style>
+:root{color-scheme:dark;--bg:#090a12;--panel:#121422;--line:#282b43;--purple:#9272ff;--cyan:#67e7ff;--text:#f5f5ff;--muted:#a5a8c2}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#29204c 0,transparent 48%),var(--bg);color:var(--text);font:16px system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
+.app{max-width:760px;margin:auto;min-height:100vh;display:flex;flex-direction:column;padding:16px 14px calc(14px + env(safe-area-inset-bottom))}
+header{display:flex;align-items:center;gap:12px;padding:8px 2px 16px;border-bottom:1px solid var(--line)}
+.logo{height:48px;width:48px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(145deg,#292044,#101c30);border:1px solid #6655a4;color:#c8b9ff;font-weight:900;font-size:24px;box-shadow:0 0 24px #9272ff30}
+.brand{font-size:19px;font-weight:800;letter-spacing:2px}.sub{font-size:10px;letter-spacing:2px;color:var(--cyan);margin-top:3px}.status{margin-left:auto;color:#9ef2cb;font-size:12px;white-space:nowrap}
+main{flex:1;display:flex;flex-direction:column;gap:14px;padding:18px 0}
+.welcome{text-align:center;padding:20px 12px 8px}.orb{width:94px;height:94px;border-radius:50%;margin:0 auto 18px;display:grid;place-items:center;border:1px solid #8f73ff;background:radial-gradient(circle at 35% 25%,#59479b,#15182d 65%);box-shadow:0 0 30px #8264ff35,inset 0 0 20px #9e8aff20;font-size:35px;color:#d9d0ff}
+h1{font-size:25px;margin:0 0 8px}.welcome p{color:var(--muted);margin:0 auto;max-width:420px;line-height:1.5}
+.notice{border:1px solid #554a80;background:#17142a;border-radius:13px;padding:12px 13px;color:#d6d0f4;font-size:12px;line-height:1.45}
+.messages{display:flex;flex-direction:column;gap:12px}.msg{max-width:88%;padding:12px 14px;border-radius:16px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}.user{align-self:flex-end;background:#352a5d;border:1px solid #5e4b96;border-bottom-right-radius:5px}.assistant{align-self:flex-start;background:var(--panel);border:1px solid var(--line);border-bottom-left-radius:5px}.label{font-size:10px;color:var(--cyan);letter-spacing:1.3px;margin-bottom:5px}
+.composer{position:sticky;bottom:0;background:#090a12eF;padding-top:10px}.entry{display:flex;align-items:flex-end;gap:8px;border:1px solid #45415f;border-radius:17px;background:#111321;padding:8px}
+textarea{flex:1;resize:none;border:0;outline:0;background:transparent;color:var(--text);font:inherit;min-height:42px;max-height:130px;padding:10px 5px}
+button{border:0;cursor:pointer;color:white;font:inherit}.tool{width:42px;height:42px;flex-shrink:0;border-radius:13px;background:#22243a;color:#d4caff;font-size:18px}.send{background:linear-gradient(135deg,#8c6aff,#5b7dff);font-weight:800}.tool:disabled,.send:disabled{opacity:.45}
+.foot{text-align:center;color:#747a9b;font-size:10px;padding:10px 0 0}
+@media(min-width:600px){.app{padding:22px}.welcome{padding-top:36px}.orb{width:110px;height:110px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header><div class="logo">V</div><div><div class="brand">VIERNES</div><div class="sub">ASISTENTE PERSONAL AI</div></div><div class="status">● EN LÍNEA</div></header>
+<main>
+<section class="welcome" id="welcome"><div class="orb">✧</div><h1>Hola, estoy aquí.</h1><p>Soy VIERNES. ¿Qué hacemos hoy?</p></section>
+<div class="notice" id="notice">Versión inicial: el diseño y la voz del teléfono funcionan aquí. Para obtener respuestas inteligentes reales, conecta un servidor con una API. No pongas claves secretas dentro de esta página.</div>
+<div class="messages" id="messages" aria-live="polite"></div>
+</main>
+<section class="composer">
+<div class="entry"><button class="tool" id="mic" title="Hablar" aria-label="Hablar">🎙</button><textarea id="prompt" rows="1" placeholder="Escribe a VIERNES..." aria-label="Mensaje"></textarea><button class="tool send" id="send" title="Enviar" aria-label="Enviar">➤</button></div>
+<div class="foot">VIERNES AI · PROTOTIPO PERSONAL</div>
+</section>
+</div>
+<script>
+const messagesEl=document.getElementById('messages'), promptEl=document.getElementById('prompt'), notice=document.getElementById('notice');
+let history=[];
+function addMessage(role,text){const d=document.createElement('div');d.className='msg '+(role==='user'?'user':'assistant');if(role!=='user'){const l=document.createElement('div');l.className='label';l.textContent='VIERNES';d.appendChild(l)}const t=document.createElement('div');t.textContent=text;d.appendChild(t);messagesEl.appendChild(d);d.scrollIntoView({behavior:'smooth',block:'end'});return d}
+function speak(text){if(!('speechSynthesis' in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='es-MX';u.rate=1;const voices=window.speechSynthesis.getVoices();const v=voices.find(x=>/es-MX/i.test(x.lang)&&/female|mujer|sabina|helena|paulina/i.test(x.name))||voices.find(x=>/es-MX/i.test(x.lang))||voices.find(x=>/^es/i.test(x.lang));if(v)u.voice=v;window.speechSynthesis.speak(u)}
+async function send(){const text=promptEl.value.trim();if(!text)return;document.getElementById('welcome').style.display='none';promptEl.value='';promptEl.style.height='auto';addMessage('user',text);const pending=addMessage('assistant','Estoy pensando...');document.getElementById('send').disabled=true;
+try{
+ const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text,history})});
+ if(!res.ok)throw new Error('API_NOT_READY');const data=await res.json();if(!data.reply)throw new Error('EMPTY_REPLY');pending.lastChild.textContent=data.reply;history.push({role:'user',content:text},{role:'assistant',content:data.reply});speak(data.reply);
+}catch(e){pending.lastChild.textContent='Todavía no estoy conectada a un modelo de IA. La pantalla está lista, pero para responder preguntas reales necesitamos configurar el servidor de VIERNES. Puedes probar el micrófono y el diseño mientras tanto.'}
+finally{document.getElementById('send').disabled=false;promptEl.focus()}}
+document.getElementById('send').addEventListener('click',send);promptEl.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}});promptEl.addEventListener('input',()=>{promptEl.style.height='auto';promptEl.style.height=Math.min(promptEl.scrollHeight,130)+'px'});
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;const mic=document.getElementById('mic');
+if(SR){const rec=new SR();rec.lang='es-MX';rec.interimResults=false;rec.onresult=e=>{promptEl.value=e.results[0][0].transcript;promptEl.dispatchEvent(new Event('input'));};rec.onerror=()=>{notice.textContent='No pude usar el micrófono. Revisa los permisos del navegador y prueba en Chrome.'};mic.addEventListener('click',()=>{try{rec.start()}catch(e){}})}else{mic.addEventListener('click',()=>{notice.textContent='El reconocimiento de voz no está disponible en este navegador. Prueba Chrome y permite el micrófono.'})}
+</script>
+</body>
+</html>
